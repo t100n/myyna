@@ -192,7 +192,7 @@ var urlfetchController = {
                                                         str: htm,
                                                         data:inserted_data[0]
                                                     });
-                                                });
+                                               
                                                     //send notifications
                                                     urlfetchController.notificationMail(req,board_id);
                                                     //clearing arrays
@@ -200,6 +200,7 @@ var urlfetchController = {
                                                     tmb_img_arr = [];
                                                     callback(1);
                                                 });
+                                                 });
                                             } else {
                                                 i++;
                                                 // call this function recursively

@@ -19,7 +19,7 @@
 <span style="color:red;" class="brderrmsg">{{msg}}</span>
 
 
-<form name="board_form" id="board_form" method="post" action="/board_action" enctype="multipart/form-data">
+<form name="board_form" id="board_form" method="post" action="/board_action" enctype="multipart/form-data" onsubmit="$('#add_board').addClass('disable-like');">
     
     <br /><br />
     <select name="category_id" required class="inputText">
@@ -54,7 +54,7 @@
     
     <br /><br />
     
-    <input type="submit" name="add_board" value="Add" class="submit"/>
+    <input type="submit" name="add_board" id="add_board" value="Add" class="submit"/>
 
 </form>
 
@@ -89,11 +89,10 @@
          complete: function(jqxhr, status, error) {
             $('.loader').hide(); 
 //            $('#webForm')[0].reset();
-//            $('#board_form').removeClass('disable-like');  
+           $('#add_board').removeClass('disable-like');  
         }
     }); 
-    $("#board_form").click(function(){
-        $("#board_form").validate();
-         //$('#board_form').addClass('disable-like');  
+    $("#add_board").click(function(){
+        $("#board_form").validate();        
     });
 </script>
