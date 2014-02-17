@@ -16,6 +16,7 @@ var fs      = require('fs');
 var url     = require('url');
 var http    = require('http');
 var util    = require('util');
+var path = require('path');
 var sys     = require('sys');
 var ffmpeg  = require('fluent-ffmpeg');
 var formidable      = require('formidable');
@@ -35,7 +36,7 @@ var audioController = {
                 layout: 'urlfetch_layout',
                 boards: result
             }
-            system.loadView(res,'pin_image/audio_form', data);
+            system.loadView(res,path.join('','pin_image/audio_form'), data);
         });
     },
     /**
@@ -109,7 +110,7 @@ var audioController = {
                             }; 
                             imagepinModel.insert(db_data,function(inserted_data){
                                 inserted_data[0].popStatus = '1' ;
-                                var htm = system.getCompiledView('pins/audioPinView', inserted_data[0]);
+                                var htm = system.getCompiledView(path.join('','pins/audioPinView'), inserted_data[0]);
                                 // send details to socket
                                 sio.sockets.emit('pageview', {
                                     pin_type : 'audio',

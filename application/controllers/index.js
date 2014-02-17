@@ -9,7 +9,7 @@
 
 
 //system.getLibrary('');
-
+var path = require('path');
 exports.index = function(req, res){
     console.log(req.params);
 //    res.render('index', { title: 'Express' });
@@ -27,7 +27,7 @@ exports.index = function(req, res){
         home: "An MVC for Node js.. combining handlebars, express & mongodb together"
     }
     
-    system.loadView(res,'home/index', data);
+    system.loadView(res,path.join('','home/index'), data);
 };
 
 exports.userlist = function(db) {

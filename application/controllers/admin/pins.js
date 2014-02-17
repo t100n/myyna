@@ -7,9 +7,9 @@
  * @author Robin <robin@cubettech.com>
  * @Date 14-11-2013
  */
-
-system.setPartial('admin/topBar', 'adminTopBar');
-system.setPartial('admin/sideBar', 'adminSideBar')
+var path = require('path');
+system.setPartial(path.join('','admin/topBar'), 'adminTopBar');
+system.setPartial(path.join('','admin/sideBar'), 'adminSideBar')
 system.loadHelper('adminHelper');
 system.getLibrary('helpRegister');
 system.getLibrary('mailer');
@@ -28,12 +28,12 @@ var pinsController = {
         res.locals.subBreadcrumb = 'View all';
         var start = 0;
         var end = 10;
-        var PinModel = system.getModel('admin/pins');
+        var PinModel = system.getModel(path.join('','admin/pins'));
         
         // PinModel.getPinsAll(0,function(pins){               
         //PinModel.pinList(start,end,function(users){
             
-        system.loadView(res, 'admin/pins/list', {
+        system.loadView(res, path.join('','admin/pins/list'), {
             title: 'Pins',
             type:0
                     
@@ -46,7 +46,7 @@ var pinsController = {
         res.locals.BreadcrumbLink = '/admin/viewusers';
         res.locals.subBreadcrumb = 'Add User';
         
-        system.loadView(res, 'admin/user/add');
+        system.loadView(res, path.join('','admin/user/add'));
     },
     addPinsPost: function(req, res){
         if(req.body.username && req.body.password && (req.body.password == req.body.password_r)){
@@ -61,7 +61,7 @@ var pinsController = {
                 "email": req.body.email,
                 "time_created": new Date().getTime()
             };
-            var PinModel = system.getModel('admin/pins');
+            var PinModel = system.getModel(path.join('','admin/pins'));
             PinModel.addUser(data, function(user){
                 if(user[0]._id) {
                     HELPER.setFlashMessage('Added new user.');
@@ -81,7 +81,7 @@ var pinsController = {
                 "name": req.body.name,
                 "email": req.body.email
             };
-            var PinModel = system.getModel('admin/pins');
+            var PinModel = system.getModel(path.join('','admin/pins'));
             PinModel.updateUser(req.body.id, data, function(updated){
                 if(updated == 1) {
                     HELPER.setFlashMessage('User details updated!');
@@ -96,7 +96,7 @@ var pinsController = {
         }
     },
     deletePin: function(req,res){
-        var PinModel = system.getModel('admin/pins');
+        var PinModel = system.getModel(path.join('','admin/pins'));
         PinModel.deletePin(req.params.id, function(results){
             if(results == 1) {
                 HELPER.setFlashMessage('Pin deleted successfully');
@@ -112,13 +112,13 @@ var pinsController = {
         res.locals.BreadcrumbLink = '/admin/viewusers';
         res.locals.subBreadcrumb = 'Edit User';
         
-        var PinModel = system.getModel('admin/pins');
+        var PinModel = system.getModel(path.join('','admin/pins'));
         PinModel.getUser(req.params.id, function(user) {  
             var data = {
                 'edit': 1,
                 'user': user
             }
-            system.loadView(res, 'admin/user/add', data);
+            system.loadView(res, path.join('','admin/user/add'), data);
         });
              
         
@@ -133,7 +133,7 @@ var pinsController = {
             action = 'unblock';
         }
         
-        var PinModel = system.getModel('admin/pins');
+        var PinModel = system.getModel(path.join('','admin/pins'));
         PinModel.blockPin(req.params.id, req.params.type, function(user) {  
             if(user == 1) {
                 HELPER.setFlashMessage('Pin '+action+'ed succesfully!');
@@ -148,11 +148,11 @@ var pinsController = {
         res.locals.BreadcrumbLink = '/admin/viewpins';
         res.locals.subBreadcrumb = 'Blocked pins';
         
-        var PinModel = system.getModel('admin/pins');
+        var PinModel = system.getModel(path.join('','admin/pins'));
         //        PinModel.getPins({
         //            'blocked':1
         //        },function(users){
-        system.loadView(res, 'admin/pins/list', {
+        system.loadView(res, path.join('','admin/pins/list'), {
             title: 'Blocked Pins',
             type:1
                
@@ -164,11 +164,11 @@ var pinsController = {
         res.locals.BreadcrumbLink = '/admin/viewpins';
         res.locals.subBreadcrumb = 'Reported pins';
         
-        var PinModel = system.getModel('admin/pins');
+        var PinModel = system.getModel(path.join('','admin/pins'));
         PinModel.getPins({
             'reported':1
         },function(users){           
-            system.loadView(res, 'admin/pins/reported', {
+            system.loadView(res, path.join('','admin/pins/reported'), {
                 title: 'Reported Pins' ,
                 data:users
             });
@@ -179,7 +179,7 @@ var pinsController = {
             return;
         }
         
-        var PinModel = system.getModel('admin/pins');
+        var PinModel = system.getModel(path.join('','admin/pins'));
         PinModel.cleanPin(req.params.id, function(user) {  
             if(user == 1) {
                 HELPER.setFlashMessage('Pin Restored succesfully!');
@@ -194,7 +194,7 @@ var pinsController = {
         res.locals.BreadcrumbLink = '/admin/viewboards';
         res.locals.subBreadcrumb = req.params.id ? 'Edit Board':'Add Board';
         
-        var PinModel = system.getModel('admin/pins');
+        var PinModel = system.getModel(path.join('','admin/pins'));
         PinModel.getCatgeories(function(cats){
             if(req.params.id){
                 PinModel.getBoard(req.params.id, function(board){
@@ -203,10 +203,10 @@ var pinsController = {
                         cats:cats,
                         values: board
                     };
-                    system.loadView(res, 'admin/board/add', data);
+                    system.loadView(res, path.join('','admin/board/add'), data);
                 });
             } else {
-                system.loadView(res, 'admin/board/add', {
+                system.loadView(res, path.join('','admin/board/add'), {
                     cats:cats
                 });
             }
@@ -231,14 +231,14 @@ var pinsController = {
             
             var id = fields.bid ? fields.bid : false;
             
-            var PinModel = system.getModel('admin/pins');
+            var PinModel = system.getModel(path.join('','admin/pins'));
             
             if(files.image.name && files.image.name != '') {
                 fs.readFile(files.image.path, function(err, data) {
                     var image = files.image.name;
                     var extension = image.split(".").pop();
                     var newimage = image.split(".")[0] + '.' + extension;
-                    var newPath = 'uploads/boards/' + newimage;
+                    var newPath = path.join('uploads/boards/', newimage);
 
                     fs.writeFile(newPath, data, function(err) {
                         board.image = newimage;
@@ -286,9 +286,9 @@ var pinsController = {
         res.locals.BreadcrumbLink = '/admin/viewboards';
         res.locals.subBreadcrumb = 'All Boards';
         
-        var PinModel = system.getModel('admin/pins');
+        var PinModel = system.getModel(path.join('','admin/pins'));
         PinModel.getBoards(function(boards){
-            system.loadView(res, 'admin/board/list', {
+            system.loadView(res, path.join('','admin/board/list'), {
                 title: 'Boards' ,
                 data:boards
             });
@@ -304,7 +304,7 @@ var pinsController = {
             action = 'unlock';
         }
         
-        var PinModel = system.getModel('admin/pins');
+        var PinModel = system.getModel(path.join('','admin/pins'));
         PinModel.lockBoard(req.params.id, req.params.type, function(user) {  
             if(user == 1) {
                 HELPER.setFlashMessage('Board '+action+'ed succesfully!');
@@ -315,7 +315,7 @@ var pinsController = {
         });
     },
     deleteBoard: function(req,res){
-        var PinModel = system.getModel('admin/pins');
+        var PinModel = system.getModel(path.join('','admin/pins'));
         PinModel.deleteBoard(req.params.id, function(results){
             if(results == 1) {
                 HELPER.setFlashMessage('Board deleted successfully');
@@ -331,17 +331,17 @@ var pinsController = {
         res.locals.BreadcrumbLink = '/admin/viewcategories';
         res.locals.subBreadcrumb = 'Add Category';
         
-        var PinModel = system.getModel('admin/pins');
+        var PinModel = system.getModel(path.join('','admin/pins'));
         if(req.params.id){
             PinModel.getCategory(req.params.id, function(board){
                 var data ={
                     edit: 1,
                     values: board
                 };
-                system.loadView(res, 'admin/category/add', data);
+                system.loadView(res, path.join('','admin/category/add'), data);
             });
         } else {
-            system.loadView(res, 'admin/category/add');
+            system.loadView(res, path.join('','admin/category/add'));
         }
         
     },
@@ -359,14 +359,14 @@ var pinsController = {
             
             var id = fields.cid ? fields.cid : false;
             
-            var PinModel = system.getModel('admin/pins');
+            var PinModel = system.getModel(path.join('','admin/pins'));
             
             if(files.image.name && files.image.name != '') {
                 fs.readFile(files.image.path, function(err, data) {
                     var image = files.image.name;
                     var extension = image.split(".").pop();
                     var newimage = image.split(".")[0] + '.' + extension;
-                    var newPath = 'uploads/category/' + newimage;
+                    var newPath = path.join('uploads/category/', newimage);
 
                     fs.writeFile(newPath, data, function(err) {
                         category.image = newimage;
@@ -414,16 +414,16 @@ var pinsController = {
         res.locals.BreadcrumbLink = '/admin/viewcategories';
         res.locals.subBreadcrumb = 'All Categories';
         
-        var PinModel = system.getModel('admin/pins');
+        var PinModel = system.getModel(path.join('','admin/pins'));
         PinModel.getCatgeories(function(cats){
-            system.loadView(res, 'admin/category/list', {
+            system.loadView(res, path.join('','admin/category/list'), {
                 title: 'Categories' ,
                 data:cats
             });
         });
     },
     deleteCategory: function(req,res){
-        var PinModel = system.getModel('admin/pins');
+        var PinModel = system.getModel(path.join('','admin/pins'));
         PinModel.deleteCategory(req.params.id, function(results){
             if(results == 1) {
                 HELPER.setFlashMessage('Category deleted successfully');
@@ -438,7 +438,7 @@ var pinsController = {
     pinPagination:function(req,res){
         
      
-        var PinModel = system.getModel('admin/pins');  
+        var PinModel = system.getModel(path.join('','admin/pins'));  
         var nedata = [];
         var data1=[];
         var data ={};
@@ -479,8 +479,8 @@ var pinsController = {
                         var pin_date = HELPER.getDate(v.time);                
                                            
    
-                        var template = system.getCompiledView('admin/pins/row', v)
-                        var actions = system.getCompiledView('admin/pins/action', v)
+                        var template = system.getCompiledView(path.join('','admin/pins/row'), v)
+                        var actions = system.getCompiledView(path.join('','admin/pins/action'), v)
                         var data2 = [template,v.user.name, pin_date,actions];  
                 
                         if(nedata.push(data2)){

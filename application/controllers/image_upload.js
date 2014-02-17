@@ -15,6 +15,7 @@
 var fs = require('fs');
 var url = require('url');
 var http = require('http');
+var path = require('path');
 var util = require('util');
 var sys = require('sys');
 var formidable = require('formidable');
@@ -51,7 +52,7 @@ var imageController = {
                 layout: 'urlfetch_layout',
                 boards: result
             }
-            system.loadView(res, 'pin_image/addpin', data);
+            system.loadView(res, path.join('','pin_image/addpin'), data);
             });
         });
     },
@@ -66,7 +67,7 @@ var imageController = {
                 layout: 'urlfetch_layout',
                 boards: result
             }
-            var htm = system.getCompiledView('pin_image/browse_form', data);
+            var htm = system.getCompiledView(path.join('','pin_image/browse_form'), data);
             res.send(htm);
         });
     },
@@ -164,7 +165,7 @@ var imageController = {
                                                 inserted_data[0].creator_name = req.session.login_user_name;
                                                 inserted_data[0].creator_image = req.session.login_user_img;
                                                 //console.log(inserted_data);
-                                                var htm = system.getCompiledView('pins/imagePinView', inserted_data[0]);
+                                                var htm = system.getCompiledView(path.join('','pins/imagePinView'), inserted_data[0]);
                                                 // send details to socket
                                                 boardModel.getCategoryByBoardId(board_id,function(catdetails){
                                                     inserted_data[0].category_id = catdetails.category_id ? catdetails.category_id: ''
@@ -231,7 +232,7 @@ var imageController = {
                                         inserted_data[0].loggeduser_id = req.session.login_user_id;
                                         inserted_data[0].creator_name = req.session.login_user_name;
                                         inserted_data[0].creator_image = req.session.login_user_img;
-                                        var htm = system.getCompiledView('pins/audioPinView', inserted_data[0]);
+                                        var htm = system.getCompiledView(path.join('','pins/audioPinView'), inserted_data[0]);
                                         // send details to socket
                                         boardModel.getCategoryByBoardId(board_id,function(catdetails){
                                             inserted_data[0].category_id = catdetails.category_id ? catdetails.category_id: ''
@@ -271,7 +272,7 @@ var imageController = {
                             fs.writeFile(newPath, data, function(err) {
                                 //console.log('renamed complete');
                                 fs.unlink(files.upload.path);
-                                var thumbPath = DEFINES.VIDEO_PATH_REL + 'thumb/';
+                                var thumbPath = path.join(DEFINES.VIDEO_PATH_REL, 'thumb/');
                                 var thumb = cur_time + '.png';
                                 
                                 var exec;
@@ -304,7 +305,7 @@ var imageController = {
                                     inserted_data[0].loggeduser_id = req.session.login_user_id;
                                     inserted_data[0].creator_name = req.session.login_user_name;
                                     inserted_data[0].creator_image = req.session.login_user_img;
-                                    var template = system.getCompiledView('pins/videoPinView', inserted_data[0]);
+                                    var template = system.getCompiledView(path.join('','pins/videoPinView'), inserted_data[0]);
                                     // send details to socket
                                     boardModel.getCategoryByBoardId(board_id,function(catdetails){
                                         inserted_data[0].category_id = catdetails.category_id ? catdetails.category_id: ''

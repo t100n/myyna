@@ -16,8 +16,9 @@ boardModel      = system.getModel('board'),
 catModel        = system.getModel('category'),
 costModel       = system.getModel('cost'),
 fs              = require('fs'),
+path            = require('path'),
 formidable      = require('formidable'),
-boardImagePath  = appPath + '/uploads/boards/',
+boardImagePath  = path.join(appPath,'/uploads/boards/'),
 im              = require('imagemagick'),
 UserModel       = system.getModel('user'),
 FollowerModel   = system.getModel('follower'),
@@ -42,7 +43,7 @@ var boardController = {
                     cost: cost,
                     posted_data: []
                 }
-                system.loadView(res, 'pin_image/board_form', data);
+                system.loadView(res, path.join('','pin_image/board_form'), data);
             });
         });
     },
@@ -69,7 +70,7 @@ var boardController = {
             newPath         = boardImagePath + img_name,
             tmb_name        = img_name_time,
             tmb_path        = boardImagePath + tmb_name;
-            tmb_path2       = boardImagePath + 'thumb/' + tmb_name;
+            tmb_path2       = path.join(boardImagePath , 'thumb/' + tmb_name);
             
             if (category_id == '' ||
                 //cost =='' ||
@@ -182,7 +183,7 @@ var boardController = {
                 layout: 'urlfetch_layout',
                 boards: boards
             }
-            system.loadView(res, 'pin_image/view_board', data);
+            system.loadView(res, path.join('','pin_image/view_board'), data);
         });
     },
     /**
@@ -216,8 +217,8 @@ var boardController = {
                         'user_image': userdetail[0].image
                         
                     };
-                    system.loadView(res, 'pins/boardlist', data);
-                    system.setPartial('pins/pinheader', 'pinheader');
+                    system.loadView(res, path.join('','pins/boardlist'), data);
+                    system.setPartial(path.join('','pins/pinheader'), 'pinheader');
                 });
             });
         });

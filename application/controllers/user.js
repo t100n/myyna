@@ -18,7 +18,7 @@ system.loadHelper('pinHelper');
 system.loadHelper('adminHelper');
 system.getLibrary('helpRegister');
 var crypto = require('crypto');
-
+var path = require('path');
 var userController = {
    
     /*
@@ -29,15 +29,18 @@ var userController = {
     login: function(req, res) {
         UserModel.getLoginPage(function(data) {            
           var verify_message = req.session.mailverifymsg;
+          var loginmsg = req.session.loginmessage;
+          req.session.loginmessage =null;
           req.session.mailverifymsg = null;
             var data = {
                 'layout': 'login',
                 'result': data,
-                'msg':verify_message?verify_message:null
+                'msg':verify_message?verify_message:null,
+                'login-message':loginmsg?loginmsg:null
             };
-            system.loadView(res, 'user/login', data);
-            system.setPartial('user/signup', 'signupform');
-            system.setPartial('user/forgot', 'forgotform');
+            system.loadView(res, path.join('','user/login'), data);
+            system.setPartial(path.join('','user/signup'), 'signupform');
+            system.setPartial(path.join('','user/forgot'), 'forgotform');
         });
 
     },
@@ -147,8 +150,8 @@ var userController = {
         var data = {
             'pagetitle': 'Sign Up'
         };
-        system.loadView(res, 'user/signup', data);
-        system.setPartial('pins/pinheader', 'pinheader');
+        system.loadView(res, path.join('','user/signup'), data);
+        system.setPartial(path.join('','pins/pinheader'), 'pinheader');
     },
     /*
      * user signup 
@@ -445,7 +448,7 @@ var userController = {
                                                 });
                                                 im.resize({
                                                     srcPath: DEFINES.USER_IMAGE_PATH + user_image,
-                                                    dstPath: DEFINES.USER_IMAGE_PATH + 'thumb/' + user_image,
+                                                    dstPath: path.join(DEFINES.USER_IMAGE_PATH,'thumb/' + user_image),
                                                     width: '30'
 
                                                 }, function(err, stdout, stderr) {
@@ -618,7 +621,7 @@ var userController = {
      */
     closeSignup: function(req, res) {
         
-        system.loadView(res, 'user/wincloser', {
+        system.loadView(res, path.join('','user/wincloser'), {
             layout: false, 
             user_id: req.session.login_user_id
         })
@@ -634,8 +637,8 @@ var userController = {
         var data = {
             'pagetitle': 'User Credential'
         };
-        system.loadView(res, 'user/getuser', data);
-        system.setPartial('pins/pinheader', 'pinheader');
+        system.loadView(res,path.join('','user/getuser'), data);
+        system.setPartial(path.join('','pins/pinheader'), 'pinheader');
 
     },
     /*
@@ -793,7 +796,7 @@ var userController = {
                                                 });
                                                 im.resize({
                                                     srcPath: DEFINES.USER_IMAGE_PATH + user_image,
-                                                    dstPath: DEFINES.USER_IMAGE_PATH + 'thumb/' + user_image,
+                                                    dstPath: path.join(DEFINES.USER_IMAGE_PATH,'thumb/' + user_image),
                                                     width: '30'
 
                                                 }, function(err, stdout, stderr) {
@@ -894,8 +897,8 @@ var userController = {
 
             };
 
-            system.loadView(res, 'user/userlist', data);
-            system.setPartial('pins/pinheader', 'pinheader');
+            system.loadView(res, path.join('','user/userlist'), data);
+            system.setPartial(path.join('','pins/pinheader'), 'pinheader');
         //system.setPartial('user/userdetail', 'userdetail');
 
 
@@ -1008,7 +1011,7 @@ var userController = {
                         boards: result,
                         'user_image': details[0].image
                     };
-                    system.loadView(res, 'pins/settings', data);
+                    system.loadView(res, path.join('','pins/settings'), data);
 
                 //system.setPartial('pins/pinheader', 'pinheader');
                 });
@@ -1084,7 +1087,7 @@ var userController = {
                                     });
                                     im.resize({
                                         srcPath: DEFINES.USER_IMAGE_PATH + newimage,
-                                        dstPath: DEFINES.USER_IMAGE_PATH + 'thumb/' + newimage,
+                                        dstPath: path.join(DEFINES.USER_IMAGE_PATH,'thumb/' + newimage),
                                         width: '30'
 
                                     }, function(err, stdout, stderr) {

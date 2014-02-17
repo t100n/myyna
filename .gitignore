@@ -5,4 +5,4 @@ sampleuploads
 test
 uploads
 modules
-config
+application/config

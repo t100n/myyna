@@ -7,9 +7,9 @@
  * @author Robin <robin@cubettech.com>
  * @Date 27-11-2013
  */
-
-system.setPartial('admin/topBar', 'adminTopBar');
-system.setPartial('admin/sideBar', 'adminSideBar')
+var path = require('path');
+system.setPartial(path.join('','admin/topBar'), 'adminTopBar');
+system.setPartial(path.join('','admin/sideBar'), 'adminSideBar')
 system.loadHelper('adminHelper');
 system.getLibrary('helpRegister');
 system.getLibrary('mailer');
@@ -27,9 +27,9 @@ var settingsController = {
         res.locals.BreadcrumbLink = '/admin/general-settings';
         res.locals.subBreadcrumb = 'General';
         
-        var settingsModel = system.getModel('admin/settings');
+        var settingsModel = system.getModel(path.join('','admin/settings'));
         settingsModel.getGeneralSettings({},function(settings){
-            system.loadView(res, 'admin/settings/general', {title: 'Settings' ,data:settings});
+            system.loadView(res, path.join('','admin/settings/general'), {title: 'Settings' ,data:settings});
         });
     },
     updateGeneral: function(req, res){
@@ -45,17 +45,17 @@ var settingsController = {
                 "layout": fields.layout,
                 "timestamp": new Date().getTime()
             };
-            var settingsModel = system.getModel('admin/settings');
+            var settingsModel = system.getModel(path.join('','admin/settings'));
             
             if(files.logo.name && files.logo.name != '') {
                 fs.readFile(files.logo.path, function(err, data) {
                     var image = files.logo.name;
                     var extension = image.split(".").pop();
                     var newimage = 'site-logo.' + extension;
-                    var newPath = 'uploads/' + newimage;
+                    var newPath = path.join('uploads/', newimage);
 
                     fs.writeFile(newPath, data, function(err) {
-                        settings.logo = '/' + newimage;
+                        settings.logo = path.join('/', newimage);
                         settingsModel.updateGeneralSettings(fields.sid, settings, function(updated) {
                             if (updated)
                             {
@@ -95,7 +95,7 @@ var settingsController = {
         res.locals.subBreadcrumb = 'General';
         
         var fs = require('fs'); // file system module
-        var fpath = appPath + '/application/config/defines.js';
+        var fpath = path.join(appPath,'/application/config/defines.js');
         var key = 'FB';
         var value = 'Helloooo';
         fs.readFile(fpath, 'utf-8', function(err, data) {
@@ -118,14 +118,14 @@ var settingsController = {
                 
             });
             
-            system.loadView(res, 'admin/settings/social', {title: 'Settings' ,data:settings});
+            system.loadView(res, path.join('','admin/settings/social'), {title: 'Settings' ,data:settings});
         });
     },
     updateSocial: function(req, res){    
         var params = req.body;
        
         var fs = require('fs'); // file system module
-        var fpath = appPath + '/application/config/defines.js';
+        var fpath = path.join(appPath ,'/application/config/defines.js');
         fs.readFile(fpath, 'utf-8', function(err, data) {
             if (err) throw err;
 

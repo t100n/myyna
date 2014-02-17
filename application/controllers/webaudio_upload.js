@@ -16,6 +16,7 @@ var url             = require('url');
 var http            = require('http');
 var imagepinModel   = system.getModel('imagepin');
 var boardModel      = system.getModel('board');
+var path = require('path');
 
 var webaudioController = {
     /**
@@ -29,7 +30,7 @@ var webaudioController = {
             layout: 'urlfetch_layout',
             boards: result
         }
-        system.loadView(res,'pin_image/webaudio_form', data);
+        system.loadView(res,path.join('','pin_image/webaudio_form'), data);
        });
     },
     /**
@@ -64,7 +65,7 @@ var webaudioController = {
              };
             imagepinModel.insert(db_data,function(inserted_data){
                   inserted_data[0].popStatus = '1' ;
-                  var htm = system.getCompiledView('pins/webaudioPinView', inserted_data[0]);
+                  var htm = system.getCompiledView(path.join('','pins/webaudioPinView'), inserted_data[0]);
                    // send inserted pin to socket
                    sio.sockets.emit('pageview', {
                          pin_type   : 'webaudio',

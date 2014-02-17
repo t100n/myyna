@@ -31,12 +31,12 @@
  * @author Robin <robin@cubettech.com>
  * @Date 23-10-2013
  */
-
+var path = require('path');
 //define route functions here
 module.exports = {
     login_validate:function(req, res, next) {
         if (!req.session.login_user_id) {
-            
+            req.session.loginmessage = "Please login to continue."
             res.redirect('/login');
         } else {
             next();
@@ -71,7 +71,7 @@ module.exports = {
     DefineLocals: function(req, res, next){
         system.loadHelper('siteWide');
         if(!DEFINES.title) {
-            var settingsModel = system.getModel('admin/settings');
+            var settingsModel = system.getModel(path.join('','admin/settings'));
             settingsModel.getGeneralSettings({},function(settings){
                 HELPER.updateConfigs(settings);
             });

@@ -11,13 +11,13 @@
  * Send instant notification and mails
  * Log notification details
  */
-
+var path = require('path');
 module.exports = {
           
     socketNotification:function(socketid,fun_id,message,userdata,mail) {
         if(mail){
             userdata.mailcontent.logo = sleekConfig.siteUrl + '/' + DEFINES.site_logo;
-            var template = system.getCompiledView('email/mail', userdata.mailcontent)
+            var template = system.getCompiledView(path.join('','email/mail'), userdata.mailcontent)
             var mailOptions = {
                 from: DEFINES.site_title+"<no-reply@myyna.com>", // sender address
                 to: userdata.tomail, // list of receivers

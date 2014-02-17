@@ -7,9 +7,9 @@
  * @author Robin <robin@cubettech.com>
  * @Date 14-11-2013
  */
-
-system.setPartial('admin/topBar', 'adminTopBar');
-system.setPartial('admin/sideBar', 'adminSideBar');
+var path = require('path');
+system.setPartial(path.join('','admin/topBar'), 'adminTopBar');
+system.setPartial(path.join('','admin/sideBar'), 'adminSideBar');
 system.loadHelper('adminHelper');
 system.getLibrary('helpRegister');
 system.getLibrary('mailer');
@@ -24,7 +24,7 @@ var adminuserController = {
      * @Date 14-11-2013
      */
     login: function(req, res){
-        system.loadView(res, 'admin/index');
+        system.loadView(res, path.join('','admin/index'));
     },
     /**
      * Authenticate admin 
@@ -41,7 +41,7 @@ var adminuserController = {
             "username": user_name,
             "password": user_pass
         };
-        var AdminModel = system.getModel('admin/adminuser');
+        var AdminModel = system.getModel(path.join('','admin/adminuser'));
         AdminModel.authenticate(data, function(admin) {
             if (admin && Object.keys(admin).length != 0)
             {
@@ -65,9 +65,9 @@ var adminuserController = {
     dashboard: function(req, res){
         res.locals.subBreadcrumb = 'Dashboard';
         
-        var AdminModel = system.getModel('admin/adminuser');
+        var AdminModel = system.getModel(path.join('','admin/adminuser'));
         AdminModel.getCounts(function(counts){
-            system.loadView(res, 'admin/dashboard', counts);
+            system.loadView(res, path.join('','admin/dashboard'), counts);
         });
         
     },
@@ -93,9 +93,9 @@ var adminuserController = {
         res.locals.BreadcrumbLink = '/admin/viewadmins';
         res.locals.subBreadcrumb = 'View all';
         
-        var AdminModel = system.getModel('admin/adminuser');
+        var AdminModel = system.getModel(path.join('','admin/adminuser'));
         AdminModel.getAdminUsers(req.session.admin_user_id,function(users){
-            system.loadView(res, 'admin/adminuser/list', {data:users});
+            system.loadView(res, path.join('','admin/adminuser/list'), {data:users});
         });
     },
     addAdminUsers: function(req, res){
@@ -103,7 +103,7 @@ var adminuserController = {
         res.locals.BreadcrumbLink = '/admin/viewadmins';
         res.locals.subBreadcrumb = 'Add Admin';
         
-        system.loadView(res, 'admin/adminuser/add');
+        system.loadView(res, path.join('','admin/adminuser/add'));
     },
     addAdminUsersPost: function(req, res){
         if(req.body.username && req.body.password && (req.body.password == req.body.password_r)){
@@ -117,7 +117,7 @@ var adminuserController = {
                 "password": user_pass,
                 "email": req.body.email
             };
-            var AdminModel = system.getModel('admin/adminuser');
+            var AdminModel = system.getModel(path.join('','admin/adminuser'));
             AdminModel.addAdmin(data, function(user){
                 if(user[0]._id) {
                     var html = '<b>Hi ' + data.name + ', </b><br/>Your '+DEFINES.site_title+' admin account has been created.\
@@ -161,7 +161,7 @@ var adminuserController = {
                 user_pass = crypto.createHash('md5').update(user_pass).digest("hex");
                 data['password'] = user_pass;
             }
-            var AdminModel = system.getModel('admin/adminuser');
+            var AdminModel = system.getModel(path.join('','admin/adminuser'));
             AdminModel.updateAdmin(req.body.id, data, function(updated){
                 if(updated == 1) {
                     if(req.session.admin_user_id == req.body.id){
@@ -180,7 +180,7 @@ var adminuserController = {
         }
     },
     checkUsername: function(req,res){
-        var AdminModel = system.getModel('admin/adminuser');
+        var AdminModel = system.getModel(path.join('','admin/adminuser'));
         AdminModel.checkUsername(req.params.username, function(user){
             if(user && user._id) {
                 res.send({status:0});
@@ -190,7 +190,7 @@ var adminuserController = {
         });
     },
     deleteAdminUser: function(req,res){
-        var AdminModel = system.getModel('admin/adminuser');
+        var AdminModel = system.getModel(path.join('','admin/adminuser'));
         AdminModel.deleteAdmin(req.params.id, function(results){
             if(results == 1) {
                 HELPER.setFlashMessage('User deleted successfully');
@@ -206,18 +206,18 @@ var adminuserController = {
         res.locals.BreadcrumbLink = '/admin/viewadmins';
         res.locals.subBreadcrumb = 'Edit Admin';
         
-        var AdminModel = system.getModel('admin/adminuser');
+        var AdminModel = system.getModel(path.join('','admin/adminuser'));
         AdminModel.getAdminUser(req.params.id, function(user) {  
             var data = {
                 'edit': 1,
                 'user': user
             }
-            system.loadView(res, 'admin/adminuser/add', data);
+            system.loadView(res, path.join('','admin/adminuser/add'), data);
         });
     },
     ResetPassword: function(req, res){      
         
-        var AdminModel = system.getModel('admin/adminuser');
+        var AdminModel = system.getModel(path.join('','admin/adminuser'));
             
         AdminModel.getAdminUser(req.params.id, function(user) {  
             if(user){

@@ -12,6 +12,7 @@
  */
 
 var costModel = system.getModel('cost');
+var path            = require('path');
 var costController = {
     /**
      * shows a form to add cost
@@ -23,7 +24,7 @@ var costController = {
             layout  : 'urlfetch_layout',
             msg     : ''
        }
-       system.loadView(res,'pin_image/cost_form', data);
+       system.loadView(res, path.join('','pin_image/cost_form'), data);
     },
     /**
      * insert details to db
@@ -37,7 +38,7 @@ var costController = {
                 layout  : 'urlfetch_layout',
                 msg     : 'Cost must be a numeric value.'
             }
-            system.loadView(res,'pin_image/cost_form', data);
+            system.loadView(res, path.join('','pin_image/cost_form'), data);
         } else { 
             var db_data = { cost  :  req.body.cost };
             costModel.insert(db_data,function(inserted_data){
@@ -56,7 +57,7 @@ var costController = {
                 layout: 'urlfetch_layout',
                 cost : costs
             }
-            system.loadView(res,'pin_image/view_cost',data);
+            system.loadView(res, path.join('','pin_image/view_cost'),data);
         });   
     },
     /**

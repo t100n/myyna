@@ -15,7 +15,8 @@ var catModel    = system.getModel('category');
 var fs          = require('fs'); 
 var formidable  = require('formidable');
 var im          = require('imagemagick');
-var catImagePath = appPath + '/uploads/category/' ;
+var path            = require('path');
+var catImagePath = path.join(appPath ,'/uploads/category/') ;
 
 var categoryController = {
     /**
@@ -29,7 +30,7 @@ var categoryController = {
             msg     : '',
             posted_data : []
         }
-        system.loadView(res,'pin_image/category_form', data);
+        system.loadView(res, path.join('','pin_image/category_form'), data);
     },
     /**
      *  insert details to db and save image
@@ -58,7 +59,7 @@ var categoryController = {
             {
                  //fields missing.
                  dat.msg = 'Please complete all fields.';
-                 system.loadView(res,'pin_image/category_form', data);
+                 system.loadView(res, path.join('','pin_image/category_form'), data);
             } else if((files.cat_img.type!='image/jpeg' &&
                    files.cat_img.type!='image/pjpeg' &&  
                    files.cat_img.type!='image/png' &&  
@@ -67,7 +68,7 @@ var categoryController = {
             {
                  //fields missing.
                  dat.msg = 'Invalid image format/size.';
-                 system.loadView(res,'pin_image/category_form', dat);
+                 system.loadView(res, path.join('','pin_image/category_form'), dat);
             } else {
             // for storing images to folder
             fs.readFile(img_path, function (err, data) {
@@ -123,7 +124,7 @@ var categoryController = {
                 layout: 'urlfetch_layout',
                 categories : categories
             }
-            system.loadView(res,'pin_image/view_category',data);
+            system.loadView(res, path.join('','pin_image/view_category'),data);
         });
     },
     /**

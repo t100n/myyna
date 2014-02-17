@@ -7,9 +7,9 @@
  * @author Robin <robin@cubettech.com>
  * @Date 14-11-2013
  */
-
-system.setPartial('admin/topBar', 'adminTopBar');
-system.setPartial('admin/sideBar', 'adminSideBar')
+var path = require('path');
+system.setPartial(path.join('','admin/topBar'), 'adminTopBar');
+system.setPartial(path.join('','admin/sideBar'), 'adminSideBar')
 system.loadHelper('adminHelper');
 system.getLibrary('helpRegister');
 system.getLibrary('mailer');
@@ -27,9 +27,9 @@ var userController = {
         res.locals.BreadcrumbLink = '/admin/viewusers';
         res.locals.subBreadcrumb = 'View all';
         
-        var userModel = system.getModel('admin/user');
+        var userModel = system.getModel(path.join('','admin/user'));
         userModel.getUsers({},function(users){
-            system.loadView(res, 'admin/user/list', {title: 'Users' ,data:users});
+            system.loadView(res, path.join('','admin/user/list'), {title: 'Users' ,data:users});
         });
     },
     addUsers: function(req, res){
@@ -37,7 +37,7 @@ var userController = {
         res.locals.BreadcrumbLink = '/admin/viewusers';
         res.locals.subBreadcrumb = 'Add User';
         
-        system.loadView(res, 'admin/user/add');
+        system.loadView(res, path.join('','admin/user/add'));
     },
     addUsersPost: function(req, res){
         if(req.body.username && req.body.password && (req.body.password == req.body.password_r)){
@@ -52,7 +52,7 @@ var userController = {
                 "email": req.body.email,
                 "time_created": new Date().getTime()
             };
-            var userModel = system.getModel('admin/user');
+            var userModel = system.getModel(path.join('','admin/user'));
             userModel.addUser(data, function(user){
                 if(user[0]._id) {
                     var html = '<b>Hi ' + data.name + ', </b><br/>Your '+DEFINES.site_title+' account has been created.\
@@ -89,7 +89,7 @@ var userController = {
                 "name": req.body.name,
                 "email": req.body.email
             };
-            var userModel = system.getModel('admin/user');
+            var userModel = system.getModel(path.join('','admin/user'));
             userModel.updateUser(req.body.id, data, function(updated){
                 if(updated == 1) {
                     HELPER.setFlashMessage('User details updated!');
@@ -104,7 +104,7 @@ var userController = {
         }
     },
     checkUsername: function(req,res){
-        var userModel = system.getModel('admin/user');
+        var userModel = system.getModel(path.join('','admin/user'));
         userModel.checkUsername(req.params.username, function(user){
             if(user && user._id) {
                 res.send({status:0});
@@ -114,7 +114,7 @@ var userController = {
         });
     },
     deleteUser: function(req,res){
-        var userModel = system.getModel('admin/user');
+        var userModel = system.getModel(path.join('','admin/user'));
         userModel.deleteUser(req.params.id, function(results){
             if(results == 1) {
                 HELPER.setFlashMessage('User deleted successfully');
@@ -130,13 +130,13 @@ var userController = {
         res.locals.BreadcrumbLink = '/admin/viewusers';
         res.locals.subBreadcrumb = 'Edit User';
         
-        var userModel = system.getModel('admin/user');
+        var userModel = system.getModel(path.join('','admin/user'));
         userModel.getUser(req.params.id, function(user) {  
             var data = {
                 'edit': 1,
                 'user': user
             }
-            system.loadView(res, 'admin/user/add', data);
+            system.loadView(res, path.join('','admin/user/add'), data);
         });
              
         
@@ -151,7 +151,7 @@ var userController = {
             action = 'unblock';
         }
         
-        var userModel = system.getModel('admin/user');
+        var userModel = system.getModel(path.join('','admin/user'));
         userModel.blockUser(req.params.id, req.params.type, function(user) {  
             if(user == 1) {
                 HELPER.setFlashMessage('User '+action+'ed succesfully!');
@@ -163,7 +163,7 @@ var userController = {
     },
     ResetPassword: function(req, res){      
         
-        var userModel = system.getModel('admin/user');
+        var userModel = system.getModel(path.join('','admin/user'));
             
         userModel.getUser(req.params.id, function(user) {  
             if(user){
@@ -218,9 +218,9 @@ var userController = {
         res.locals.BreadcrumbLink = '/admin/viewusers';
         res.locals.subBreadcrumb = 'Blocked users';
         
-        var userModel = system.getModel('admin/user');
+        var userModel = system.getModel(path.join('','admin/user'));
         userModel.getUsers({'blocked':1},function(users){
-            system.loadView(res, 'admin/user/list', {title: 'Blocked Users' ,data:users});
+            system.loadView(res, path.join('','admin/user/list'), {title: 'Blocked Users' ,data:users});
         });
     }
 }

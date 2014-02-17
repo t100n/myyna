@@ -16,6 +16,7 @@ var mongodb = require('mongodb');
 var hbs = require('handlebars');
 var io = require('socket.io');
 var http = require('http');
+var path = require('path');
 var ncp = require('ncp').ncp;
 var async = require('async');
 var installPath,installDir;
@@ -27,7 +28,7 @@ process.on('uncaughtException', function (exception) {
 	console.log(exception);
 	console.log('Sorry! Installation Failed!');
 	installPath.replace('install', '_install')
-	fs.rename(installPath, installDir + '/install', function(err) {
+	fs.rename(installPath, path.join(installDir,'/install'), function(err) {
 		if (err) {
 			console.log(err);
 		}
@@ -55,6 +56,10 @@ module.exports = function(app, sFolderPath, directory) {
         form.parse(req, function(err, fields, files) {
             var port = fields.app_port;
             var base_url = fields.base_url;
+           if(base_url.charAt(base_url.length-1) == "/"){
+               base_url = base_url.substr(0, base_url.length - 1);
+           }
+            console.log(base_url);
             var db_host = fields.db_host;
             var db_user = fields.db_user;
             var db_password = fields.db_password;
@@ -90,21 +95,21 @@ module.exports = function(app, sFolderPath, directory) {
                     var image = files.site_logo.name;
                     var extension = image.split(".").pop();
                     var newimage = 'site-logo.' + extension;
-                    var newPath = 'uploads/' + newimage;
-                    settings.logo = '/' + newimage;
+                    var newPath = path.join('','uploads/' + newimage);
+                    settings.logo = path.join('', '/'+ newimage);
             }
             else
             {
-                settings.logo = '/' + 'site-logo.png';
+                settings.logo = path.join('','/' + 'site-logo.png');
             }
 
             sio.sockets.emit('status_data', {
                 msg:'extract config...'
             });
             var cur_pat = path.join(__dirname);
-            var config_path = cur_pat.replace('system/install', '') + 'application/config/config.js';
+            var config_path = cur_pat.replace(path.join('','system/install'), '') + path.join('','application/config/config.js');
 
-            var db_path = cur_pat.replace('system/install', '') + 'application/config/mongodb.js';
+            var db_path = cur_pat.replace(path.join('','system/install'), '') + path.join('','application/config/mongodb.js');
 
             var db_data = require(db_path);
             fs.readFile(config_path, 'utf8', function(err, data) {
@@ -217,8 +222,8 @@ module.exports = function(app, sFolderPath, directory) {
 
         if (db_sample)
         {
-            var command = 'mongorestore -d' + db_name + ' '+sFolderPath+'/db/withdata';
-            var pin_path = sFolderPath + '/pins';
+            var command = 'mongorestore -d' + db_name + ' '+path.join(sFolderPath,'/db/withdata');
+            var pin_path = path.join(sFolderPath , '/pins');
             var newpin_path = sFolderPath.replace('install', 'uploads') ;
                 
             ncp(pin_path, newpin_path, function (err) {
@@ -230,7 +235,7 @@ module.exports = function(app, sFolderPath, directory) {
 		            var image = files.site_logo.name;
 		            var extension = image.split(".").pop();
 		            var newimage = 'site-logo.' + extension;
-		            var newPath = 'uploads/' + newimage;
+		            var newPath = path.join('','uploads/' + newimage);
 
 		            fs.writeFile(newPath, data, function(err) {
 		                if(err) console.log(err);
@@ -243,7 +248,7 @@ module.exports = function(app, sFolderPath, directory) {
         }
         else
         {
-            var command = 'mongorestore -d' + db_name + ' '+sFolderPath+'/db/withoutdata';
+            var command = 'mongorestore -d' + db_name + ' '+path.join(sFolderPath,'/db/withoutdata');
         }
 
         child = exec(command, // command line argument directly in string
@@ -281,7 +286,7 @@ module.exports = function(app, sFolderPath, directory) {
 
                         	console.log('settings inserted !! ');
 
-				fs.rename(sFolderPath, directory + '/_install', function(err) {
+				fs.rename(sFolderPath, path.join(directory , '/_install'), function(err) {
 				    if (err) {
 				        throw err;
 					sio.sockets.emit('rename_err'); 				
@@ -309,7 +314,7 @@ module.exports = function(app, sFolderPath, directory) {
 
     app.post('/permissioncheck', function(req, res) {
         var cur_pat = path.join(__dirname);
-        var app_path = cur_pat.replace('system/install', '');
+        var app_path = cur_pat.replace(path.join('','system/install'), '');
         var check =0;
        
         var db_host = req.body.dbhost;
@@ -323,12 +328,12 @@ module.exports = function(app, sFolderPath, directory) {
          var mongo = require('mongodb');
         async.eachSeries(
             // Pass items to iterate over
-            ['application/config/config.js', 'application/config/mongodb.js',
-            'application/config/defines.js', 'uploads'],
+            [path.join('','application/config/config.js'), path.join('','application/config/mongodb.js'),
+            path.join('','application/config/defines.js'), 'uploads'],
             // Pass iterator function that is called for each item
             function(filename, cbk) {              
                 fs.stat(app_path + filename, function(error, stats) {
-                   
+                   console.log(stats.mode);
                     if (stats.mode != '33206' && stats.mode != '16895') {
 
                         data.res = 0;
@@ -376,7 +381,7 @@ module.exports = function(app, sFolderPath, directory) {
     });
     
     app.get('/success',function(req,res){
-        var realPath = path.join(sFolderPath, 'application/views', sleekConfig.theme, 'success.html');
+        var realPath = path.join(sFolderPath, path.join('','application/views'), sleekConfig.theme, 'success.html');
 
         if (!fs.existsSync(realPath)) {
             realPath = path.join(sFolderPath, 'applications', 'views', 'success.html');
@@ -401,7 +406,7 @@ module.exports = function(app, sFolderPath, directory) {
         
         
         try{
-            var realPath = path.join(sFolderPath, 'application/views', sleekConfig.theme, 'install.html');
+            var realPath = path.join(sFolderPath, path.join('','application/views'), sleekConfig.theme, 'install.html');
 
             if (!fs.existsSync(realPath)) {
                 realPath = path.join(sFolderPath, 'applications', 'views', 'install.html');

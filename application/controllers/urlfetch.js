@@ -23,6 +23,7 @@ var tmb_img_arr = []; // thumb image array
 var boardModel  = system.getModel('board');
 var pin_type_id = "527b4158b850403f04000000";
 system.loadHelper('myhelper');
+var path = require('path');
 
 var urlfetchController = {
     /**
@@ -34,7 +35,7 @@ var urlfetchController = {
         var data = {
             layout: 'urlfetch_layout'
         }
-        system.loadView(res, 'pin_image/url_form', data);
+        system.loadView(res, path.join('','pin_image/url_form'), data);
     },
     /**
      *  get posted data
@@ -179,12 +180,19 @@ var urlfetchController = {
                                                 };
                                                 imagepinModel.insert(db_data, function(inserted_data) {
                                                     inserted_data[0].popStatus = '1' ;
-                                                    var htm = system.getCompiledView('pins/imagePinView', inserted_data[0]);
-                                                    // send inserted pin to socket
+                                                     inserted_data[0].pinlike=1;
+                                                inserted_data[0].loggeduser_id = req.session.login_user_id;
+                                                inserted_data[0].creator_name = req.session.login_user_name;
+                                                inserted_data[0].creator_image = req.session.login_user_img;
+                                                    var htm = system.getCompiledView(path.join('','pins/imagePinView'), inserted_data[0]);                                               
+                                                    boardModel.getCategoryByBoardId(board_id,function(catdetails){
+                                                    inserted_data[0].category_id = catdetails.category_id ? catdetails.category_id: ''
                                                     sio.sockets.emit('pageview', {
                                                         pin_type: 'url_image',
-                                                        str: htm
+                                                        str: htm,
+                                                        data:inserted_data[0]
                                                     });
+                                                });
                                                     //send notifications
                                                     urlfetchController.notificationMail(req,board_id);
                                                     //clearing arrays
@@ -418,7 +426,7 @@ var urlfetchController = {
                     //clear stored values
                     full_url = '';
                     urls = [];
-                    var htm = system.getCompiledView('pin_image/select_image', data);
+                    var htm = system.getCompiledView(path.join('','pin_image/select_image'), data);
                     res2.send(htm);
                 }
             });

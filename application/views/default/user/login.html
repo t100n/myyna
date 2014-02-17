@@ -1,5 +1,5 @@
 <div id="log_in_container" class="log_in_container">
-  <div class="error_message" {{#if msg}} style="display:block"{{/if}}>{{#if msg}} {{msg}} {{/if}}</div>
+  <div class="error_message" {{#if msg}} style="display:block"{{/if}} {{#if login-message}} style="display:block"{{/if}}>{{#if msg}} {{msg}} {{/if}}{{#if login-message}} {{login-message}} {{/if}}</div>
   
     <header>
         <div class="row">
@@ -66,7 +66,10 @@
     </div>
     <footer>
 
-        <h1><strong><a href="#" data-toggle="modal" data-target="#myModal">Sign up</a></strong> {{#logbuttonCheck 'FB_LOGIN' 'TW_LOGIN'}} with {{/logbuttonCheck}}</h1>
+        <h1><strong>Sign up</a></strong>  with </h1>
+        <a href="#" data-toggle="modal" data-target="#myModal">
+            <span class="signup-email"></span>
+        </a>
         {{#loginbtn 'FB_LOGIN'}}       
         <a href="#" class="socialSignUps" data-link="/socialsignup">
             <span class="fb"></span>

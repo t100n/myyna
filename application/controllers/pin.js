@@ -18,6 +18,7 @@ var followerModel = system.getModel('follower');
 var notificationModel = system.getModel('notification');
 var shareModel = system.getModel('pinShare');
 var catModel = system.getModel('category');
+var path = require('path');
 var msg = '';
 system.loadHelper('pinHelper');
 system.loadHelper('myhelper');
@@ -58,13 +59,13 @@ var pinController = {
                         };
 
 
-                        system.loadView(res, 'pins/pin', data);
-                        system.setPartial('pins/pinheader', 'pinheader');
-                        system.setPartial('pins/imagePinView', 'pinviewimage');
-                        system.setPartial('pins/audioPinView', 'pinviewaudio');
-                        system.setPartial('pins/webaudioPinView', 'pinviewwebaudio');
-                        system.setPartial('pins/webPinView', 'pinvieweb');
-                        system.setPartial('pins/videoPinView', 'pinviewvideo');
+                        system.loadView(res, path.join('','pins/pin'), data);
+                        system.setPartial(path.join('','pins/pinheader'), 'pinheader');
+                        system.setPartial(path.join('','pins/imagePinView'), 'pinviewimage');
+                        system.setPartial(path.join('','pins/audioPinView'), 'pinviewaudio');
+                        system.setPartial(path.join('','pins/webaudioPinView'), 'pinviewwebaudio');
+                        system.setPartial(path.join('','pins/webPinView'), 'pinvieweb');
+                        system.setPartial(path.join('','pins/videoPinView'), 'pinviewvideo');
                     
 
                     });
@@ -101,13 +102,13 @@ var pinController = {
 
 
 
-                    system.loadView(res, 'pins/pin', data);
-                    system.setPartial('pins/pinheader', 'pinheader');
-                    system.setPartial('pins/imagePinView', 'pinviewimage');
-                    system.setPartial('pins/audioPinView', 'pinviewaudio');
-                    system.setPartial('pins/webaudioPinView', 'pinviewwebaudio');
-                    system.setPartial('pins/webPinView', 'pinvieweb');
-                    system.setPartial('pins/videoPinView', 'pinviewvideo');
+                    system.loadView(res,path.join('','pins/pin'), data);
+                    system.setPartial(path.join('','pins/pinheader'), 'pinheader');
+                    system.setPartial(path.join('','pins/imagePinView'), 'pinviewimage');
+                    system.setPartial(path.join('','pins/audioPinView'), 'pinviewaudio');
+                    system.setPartial(path.join('','pins/webaudioPinView'), 'pinviewwebaudio');
+                    system.setPartial(path.join('','pins/webPinView'), 'pinvieweb');
+                    system.setPartial(path.join('','pins/videoPinView'), 'pinviewvideo');
                 
 
 
@@ -187,7 +188,7 @@ var pinController = {
                 if (req.body.dataMode && req.body.dataMode == 1) {
                     res.send(data);
                 } else {
-                    system.loadView(res, 'pins/moredata', data);
+                    system.loadView(res, path.join('','pins/moredata'), data);
                 }
 
             }
@@ -216,8 +217,8 @@ var pinController = {
                 'pagetitle': 'Pin page', 
                 'boards': boards
             };
-            system.loadView(res, 'pins/webpin', data);
-            system.setPartial('pins/pinheader', 'pinheader');
+            system.loadView(res,path.join('','pins/webpin'), data);
+            system.setPartial(path.join('','pins/pinheader'), 'pinheader');
 
         });
 
@@ -313,7 +314,7 @@ var pinController = {
                    
                     im.resize({
                         srcPath: DEFINES.IMAGE_PATH_REL + time + '.png',
-                        dstPath: DEFINES.IMAGE_PATH_REL + 'small/' + time + '.png',
+                        dstPath: path.join(DEFINES.IMAGE_PATH_REL, 'small/' + time + '.png'),
                         width: '415'
                     }, function(err, stdout, stderr) {
 
@@ -327,7 +328,7 @@ var pinController = {
                 {
                     im.resize({
                         srcPath: DEFINES.IMAGE_PATH_REL + time + '.png',
-                        dstPath: DEFINES.IMAGE_PATH_REL + 'small/' + time + '.png',
+                        dstPath: path.join(DEFINES.IMAGE_PATH_REL,'small/' + time + '.png'),
                         width: '200'
                     }, function(err, stdout, stderr) {
 
@@ -339,7 +340,7 @@ var pinController = {
 
                 im.resize({
                     srcPath: DEFINES.IMAGE_PATH_REL + time + '.png',
-                    dstPath: DEFINES.IMAGE_PATH_REL + 'thumb/' + time + '.png',
+                    dstPath: path.join(DEFINES.IMAGE_PATH_REL,'thumb/' + time + '.png'),
                     width: '20%'
                 }, function(err, stdout, stderr) {
 
@@ -365,7 +366,7 @@ var pinController = {
                         ress[0].loggeduser_id = user;
                         ress[0].creator_name = req.session.login_user_name;
                         ress[0].creator_image = req.session.login_user_img;
-                        var template = system.getCompiledView('pins/webPinView', ress[0]);
+                        var template = system.getCompiledView(path.join('','pins/webPinView'), ress[0]);
                         // socket to add the created pin on the listing page
                         boardModel.getCategoryByBoardId(board,function(catdetails){
                             ress[0].category_id = catdetails.category_id ? catdetails.category_id: ''
@@ -585,7 +586,7 @@ var pinController = {
                                 ress[0].loggeduser_id = user;
                                 ress[0].creator_name = req.session.login_user_name;
                                 ress[0].creator_image = req.session.login_user_img;
-                                var template = system.getCompiledView('pins/videoPinView', ress[0]);
+                                var template = system.getCompiledView(path.join('','pins/videoPinView'), ress[0]);
                                 
                                   boardModel.getCategoryByBoardId(board,function(catdetails){
                                     ress[0].category_id = catdetails.category_id ? catdetails.category_id: ''
@@ -756,7 +757,7 @@ var pinController = {
                 //console.log('renamed complete');
                 fs.unlink(files.video_upld.path);
                 var thumbler = require('video-thumb');
-                var thumbPath = DEFINES.VIDEO_PATH_REL + 'thumb/';
+                var thumbPath = path.join(DEFINES.VIDEO_PATH_REL, 'thumb/');
                 var thumb = time + '.png';
                 thumbler.extract(newPath, thumbPath + thumb, '00:00:08', '300x200', function() {
                     console.log('snapshot saved to snapshot.png (300x200) with a frame at 00:00:22');
@@ -784,7 +785,7 @@ var pinController = {
                         ress[0].loggeduser_id = user;
                         ress[0].creator_name = req.session.login_user_name;
                         ress[0].creator_image = req.session.login_user_img;
-                    var template = system.getCompiledView('pins/videoPinView', ress[0]);
+                    var template = system.getCompiledView(path.join('','pins/videoPinView'), ress[0]);
                     sio.sockets.emit('pageview', {
                         'str': template, 
                         'pin_type': "video"
@@ -940,7 +941,7 @@ var pinController = {
             }
         }
         //console.log('hello');
-        webshot(req.body.pageurl, DEFINES.IMAGE_PATH_REL + 'temp/' + imagename ,webshot_options, function(err) {
+        webshot(req.body.pageurl,path.join(DEFINES.IMAGE_PATH_REL,'temp/' + imagename) ,webshot_options, function(err) {
             if(!err){
                 var data = {
                     "image": imagename
@@ -1007,13 +1008,13 @@ var pinController = {
                                                     data.boardfollow = 0;
                                                 }
 
-                                                system.loadView(res, 'pins/pin', data);
-                                                system.setPartial('pins/pinheader', 'pinheader');
-                                                system.setPartial('pins/imagePinView', 'pinviewimage');
-                                                system.setPartial('pins/audioPinView', 'pinviewaudio');
-                                                system.setPartial('pins/webaudioPinView', 'pinviewwebaudio');
-                                                system.setPartial('pins/webPinView', 'pinvieweb');
-                                                system.setPartial('pins/videoPinView', 'pinviewvideo');
+                                                system.loadView(res,path.join('','pins/pin'), data);
+                                                system.setPartial(path.join('','pins/pinheader'), 'pinheader');
+                                                system.setPartial(path.join('','pins/imagePinView'), 'pinviewimage');
+                                                system.setPartial(path.join('','pins/audioPinView'), 'pinviewaudio');
+                                                system.setPartial(path.join('','pins/webaudioPinView'), 'pinviewwebaudio');
+                                                system.setPartial(path.join('','pins/webPinView'), 'pinvieweb');
+                                                system.setPartial(path.join('','pins/videoPinView'), 'pinviewvideo');
                                             //system.setPartial('pins/popup', 'popup');
                                             });
                                         });
@@ -1052,13 +1053,13 @@ var pinController = {
                                                     data.boardfollow = 0;
                                                 }
 
-                                                system.loadView(res, 'pins/pin', data);
-                                                system.setPartial('pins/pinheader', 'pinheader');
-                                                system.setPartial('pins/imagePinView', 'pinviewimage');
-                                                system.setPartial('pins/audioPinView', 'pinviewaudio');
-                                                system.setPartial('pins/webaudioPinView', 'pinviewwebaudio');
-                                                system.setPartial('pins/webPinView', 'pinvieweb');
-                                                system.setPartial('pins/videoPinView', 'pinviewvideo');
+                                                system.loadView(res,path.join('','pins/pin'), data);
+                                                system.setPartial(path.join('','pins/pinheader'), 'pinheader');
+                                                system.setPartial(path.join('','pins/imagePinView'), 'pinviewimage');
+                                                system.setPartial(path.join('','pins/audioPinView'), 'pinviewaudio');
+                                                system.setPartial(path.join('','pins/webaudioPinView'), 'pinviewwebaudio');
+                                                system.setPartial(path.join('','pins/webPinView'), 'pinvieweb');
+                                                system.setPartial(path.join('','pins/videoPinView'), 'pinviewvideo');
                                             //system.setPartial('pins/popup', 'popup');
                                             });
                                         });
@@ -1111,9 +1112,9 @@ var pinController = {
                     if (popup == 1) {
                         data.layout = false;
                     }
-                    system.loadView(res, 'pins/popup', data);
+                    system.loadView(res, path.join('','pins/popup'), data);
                     if (popup == 0) {
-                        system.setPartial('pins/pinheader', 'pinheader');
+                        system.setPartial(path.join('','pins/pinheader'), 'pinheader');
                     }
                 }, req.session.login_user_id, popup);
 
@@ -1137,7 +1138,7 @@ var pinController = {
                 'layout': false
             };
             if (result) {
-                system.loadView(res, 'pins/moredata', data);
+                system.loadView(res, path.join('','pins/moredata'), data);
             } else {
                 res.send(404);
             }
@@ -1159,7 +1160,7 @@ var pinController = {
                 'layout': false
             };
             if (result) {
-                system.loadView(res, 'pins/morePinsByBoard', data);
+                system.loadView(res, path.join('','pins/morePinsByBoard'), data);
             } else {
                 res.send(404);
             }
@@ -1181,7 +1182,7 @@ var pinController = {
                 'layout': false
             };
             if (result) {
-                system.loadView(res, 'pins/morePinsByBoard', data);
+                system.loadView(res, path.join('','pins/morePinsByBoard'), data);
             } else {
                 res.send(404);
             }
@@ -1435,23 +1436,23 @@ var pinController = {
                         newpin = newpin[0];
                         if (pins[0].pin_type == 'web_page')
                         {
-                            var template = system.getCompiledView('pins/webPinView', newpin);
+                            var template = system.getCompiledView(path.join('','pins/webPinView'), newpin);
                         }
                         else if (pins[0].pin_type == 'video')
                         {
-                            var template = system.getCompiledView('pins/videoPinView', newpin);
+                            var template = system.getCompiledView(path.join('','pins/videoPinView'), newpin);
                         }
                         else if (pins[0].pin_type == 'url_image' || pins[0].pin_type == 'image')
                         {
-                            var template = system.getCompiledView('pins/imagePinView', newpin);
+                            var template = system.getCompiledView(path.join('','pins/imagePinView'), newpin);
                         }
                         else if (pins[0].pin_type == 'webaudio')
                         {
-                            var template = system.getCompiledView('pins/webaudioPinView', newpin);
+                            var template = system.getCompiledView(path.join('','pins/webaudioPinView'), newpin);
                         }
                         else if (pins[0].pin_type == 'audio')
                         {
-                            var template = system.getCompiledView('pins/audioPinView', newpin);
+                            var template = system.getCompiledView(path.join('','pins/audioPinView'), newpin);
                         }
                         //console.log(template);
                         sio.sockets.emit('pageview', {
@@ -1501,7 +1502,7 @@ var pinController = {
                  data.layout=false;
                  }*/
                 //console.log(result);
-                system.loadView(res, 'pins/repin', data);
+                system.loadView(res, path.join('','pins/repin'), data);
             });
         });
     },
@@ -1528,7 +1529,7 @@ var pinController = {
              data.layout=false;
              }*/
 
-            system.loadView(res, 'pins/report', data);
+            system.loadView(res, path.join('','pins/report'), data);
 
 
 
@@ -1624,13 +1625,13 @@ var pinController = {
                                     'listuser':user_id,
                                     type_id:user_id
                                 };
-                                system.loadView(res, 'pins/pin', data);
-                                system.setPartial('pins/pinheader', 'pinheader');
-                                system.setPartial('pins/imagePinView', 'pinviewimage');
-                                system.setPartial('pins/audioPinView', 'pinviewaudio');
-                                system.setPartial('pins/webaudioPinView', 'pinviewwebaudio');
-                                system.setPartial('pins/webPinView', 'pinvieweb');
-                                system.setPartial('pins/videoPinView', 'pinviewvideo');
+                                system.loadView(res, path.join('','pins/pin'), data);
+                                system.setPartial(path.join('','pins/pinheader'), 'pinheader');
+                                system.setPartial(path.join('','pins/imagePinView'), 'pinviewimage');
+                                system.setPartial(path.join('','pins/audioPinView'), 'pinviewaudio');
+                                system.setPartial(path.join('','pins/webaudioPinView'), 'pinviewwebaudio');
+                                system.setPartial(path.join('','pins/webPinView'), 'pinvieweb');
+                                system.setPartial(path.join('','pins/videoPinView'), 'pinviewvideo');
                             //system.setPartial('pins/popup', 'popup');
                             });
                         });
@@ -1674,13 +1675,13 @@ var pinController = {
                             };
                                    
 
-                            system.loadView(res, 'pins/pin', data);
-                            system.setPartial('pins/pinheader', 'pinheader');
-                            system.setPartial('pins/imagePinView', 'pinviewimage');
-                            system.setPartial('pins/audioPinView', 'pinviewaudio');
-                            system.setPartial('pins/webaudioPinView', 'pinviewwebaudio');
-                            system.setPartial('pins/webPinView', 'pinvieweb');
-                            system.setPartial('pins/videoPinView', 'pinviewvideo');
+                            system.loadView(res,path.join('','pins/pin'), data);
+                            system.setPartial(path.join('','pins/pinheader'), 'pinheader');
+                            system.setPartial(path.join('','pins/imagePinView'), 'pinviewimage');
+                            system.setPartial(path.join('','pins/audioPinView'), 'pinviewaudio');
+                            system.setPartial(path.join('','pins/webaudioPinView'), 'pinviewwebaudio');
+                            system.setPartial(path.join('','pins/webPinView'), 'pinvieweb');
+                            system.setPartial(path.join('','pins/videoPinView'), 'pinviewvideo');
                         //system.setPartial('pins/popup', 'popup');
                         });
                     }
@@ -1696,13 +1697,13 @@ var pinController = {
                         };
                                    
 
-                        system.loadView(res, 'pins/pin', data);
-                        system.setPartial('pins/pinheader', 'pinheader');
-                        system.setPartial('pins/imagePinView', 'pinviewimage');
-                        system.setPartial('pins/audioPinView', 'pinviewaudio');
-                        system.setPartial('pins/webaudioPinView', 'pinviewwebaudio');
-                        system.setPartial('pins/webPinView', 'pinvieweb');
-                        system.setPartial('pins/videoPinView', 'pinviewvideo'); 
+                        system.loadView(res,path.join('','pins/pin'), data);
+                        system.setPartial(path.join('','pins/pinheader'), 'pinheader');
+                        system.setPartial(path.join('','pins/imagePinView'), 'pinviewimage');
+                        system.setPartial(path.join('','pins/audioPinView'), 'pinviewaudio');
+                        system.setPartial(path.join('','pins/webaudioPinView'), 'pinviewwebaudio');
+                        system.setPartial(path.join('','pins/webPinView'), 'pinvieweb');
+                        system.setPartial(path.join('','pins/videoPinView'), 'pinviewvideo'); 
                     }
                 })
             });  
