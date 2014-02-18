@@ -109,6 +109,8 @@ $(document).ready(function() {
                         $('div.error_message').html('Sorry! Wrong Credentials or You may be blocked');
                         $('div.error_message').addClass('error-true alert-danger');
                     }
+                   
+
 
                 },
                 error: function(jqxhr, status, error) {

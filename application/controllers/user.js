@@ -28,10 +28,10 @@ var userController = {
      */
     login: function(req, res) {
         UserModel.getLoginPage(function(data) {            
-          var verify_message = req.session.mailverifymsg;
-          var loginmsg = req.session.loginmessage;
-          req.session.loginmessage =null;
-          req.session.mailverifymsg = null;
+            var verify_message = req.session.mailverifymsg;
+            var loginmsg = req.session.loginmessage;
+            req.session.loginmessage =null;
+            req.session.mailverifymsg = null;
             var data = {
                 'layout': 'login',
                 'result': data,
@@ -66,51 +66,59 @@ var userController = {
         };
 
         //console.log(req.body);
-
-        UserModel.Usercheck(form_data, function(ress) {
-            if (ress.length > 0)
-            {
-
-                req.session.login_user_name = ress[0].name;
-                req.session.login_user_id = ress[0]._id.toHexString();
-                req.session.loggedinfo = ress[0];
-
-
-                sio.sockets.on('connection', function(socket)
+        if(!user_name || !user_pass){
+            
+            var data = {
+                "data": 0
+            }
+            res.send(data); 
+        }
+        else{
+            UserModel.Usercheck(form_data, function(ress) {
+                if (ress.length > 0)
                 {
-                    socket.on('socket_data', function(user_id) {
-                        //  console.log(socket);
-                        loggedUser['socket'] = socket.id;
-                        var user_data = {
-                            "user_id": user_id,
-                            "socket_id": socket.id
 
-                        }
+                    req.session.login_user_name = ress[0].name;
+                    req.session.login_user_id = ress[0]._id.toHexString();
+                    req.session.loggedinfo = ress[0];
 
-                        //                    UserModel.pinLikeCheck(req.session.login_user_id,'528c79656a1167e117000001',function(callback){
-                        //                        
-                        //                    });
 
-                        UserModel.UserSocketIdUpdate(user_data, function(resp) {
+                    sio.sockets.on('connection', function(socket)
+                    {
+                        socket.on('socket_data', function(user_id) {
+                            //  console.log(socket);
+                            loggedUser['socket'] = socket.id;
+                            var user_data = {
+                                "user_id": user_id,
+                                "socket_id": socket.id
 
-                            });
+                            }
+
+                            //                    UserModel.pinLikeCheck(req.session.login_user_id,'528c79656a1167e117000001',function(callback){
+                            //                        
+                            //                    });
+
+                            UserModel.UserSocketIdUpdate(user_data, function(resp) {
+
+                                });
+                        });
                     });
-                });
-                var data = {
-                    "data": 1,
-                    "user_id": ress[0]._id.toHexString()
-                }
+                    var data = {
+                        "data": 1,
+                        "user_id": ress[0]._id.toHexString()
+                    }
                 
-                res.send(data);
-            }
-            else
-            {
-                var data = {
-                    "data": 0
+                    res.send(data);
                 }
-                res.send(data);
-            }
-        });
+                else
+                {
+                    var data = {
+                        "data": 0
+                    }
+                    res.send(data);
+                }
+            });
+        }
 
 
 
@@ -185,95 +193,102 @@ var userController = {
             "verified": 0,
             "time_created": dt.getTime()
         };
-
-        UserModel.UserExistencecheck(email, function(res1)
-        {
-
-            if (res1 == 0)
+        if(!name || !email  || !username || !userpass){
+            var response ={
+                "res":0
+            };
+            res.send(response); 
+        }
+        else{
+            UserModel.UserExistencecheck(email, function(res1)
             {
 
-                UserModel.UserInsertion(user_data, function(ress) {
+                if (res1 == 0)
+                {
 
-                    if (ress)
-                    {
-                        //                            fs.readFile(files.userimage.path, function(err, data) {
-                        //                                var image = files.userimage.name;
-                        //                                var extention = image.split(".").pop();
-                        //                                var newimage = ress._id + '.' + extention;
-                        //                                var newPath = user_images + '/' + newimage;
-                        //
-                        //                                fs.writeFile(newPath, data, function(err) {
-                        //
-                        var user_profile_data = {
-                            "pic": "",
-                            "user_id": ress[0]._id
-                        };
+                    UserModel.UserInsertion(user_data, function(ress) {
 
-                        UserModel.UserProfileInsertion(user_profile_data, function(res1) {
+                        if (ress)
+                        {
+                            //                            fs.readFile(files.userimage.path, function(err, data) {
+                            //                                var image = files.userimage.name;
+                            //                                var extention = image.split(".").pop();
+                            //                                var newimage = ress._id + '.' + extention;
+                            //                                var newPath = user_images + '/' + newimage;
+                            //
+                            //                                fs.writeFile(newPath, data, function(err) {
+                            //
+                            var user_profile_data = {
+                                "pic": "",
+                                "user_id": ress[0]._id
+                            };
 
-                            if (res1)
-                            {
+                            UserModel.UserProfileInsertion(user_profile_data, function(res1) {
 
-
-                                UserModel.InitialSettings(ress[0]._id, function(callback)
+                                if (res1)
                                 {
 
 
+                                    UserModel.InitialSettings(ress[0]._id, function(callback)
+                                    {
+
+
                                         var bef_email = email+pass_salt;
-                                     var cryptedEmail = crypto.createHash('md5').update(bef_email).digest("hex");
-                                    var html = '<b>Hi ' + name + ', </b><br/>' + 'Please use the below link for your account activation.<br/>\n\
+                                        var cryptedEmail = crypto.createHash('md5').update(bef_email).digest("hex");
+                                        var html = '<b>Hi ' + name + ', </b><br/>' + 'Please use the below link for your account activation.<br/>\n\
                                      <a href="' + sleekConfig.siteUrl + '/verify/' + cryptedEmail + '/'+ress[0]._id +'">' + sleekConfig.siteUrl + '/verify/' + cryptedEmail + '/'+ress[0]._id +'</a>                                  ';
                                    
-                                    //                                 
-                                    var maildata = {
-                                        mailcontent:{
-                                            "subject": "Mail Verification",
-                                            "body":html
-                                        },
-                                        "tomail": email,
-                                        "html"  : html,
-                                        "subject": "Mail Verification"
-                                    }
+                                        //                                 
+                                        var maildata = {
+                                            mailcontent:{
+                                                "subject": "Mail Verification",
+                                                "body":html
+                                            },
+                                            "tomail": email,
+                                            "html"  : html,
+                                            "subject": "Mail Verification"
+                                        }
 
-                                    HELPER.socketNotification('', 'notification', html, maildata, true);
-                                    //HELPER.setFlashMessage('Please check email to verify the email account', 'success');
+                                        HELPER.socketNotification('', 'notification', html, maildata, true);
+                                        //HELPER.setFlashMessage('Please check email to verify the email account', 'success');
+                                        var response ={
+                                            "res":1
+                                        };
+                                        res.send(response);
+                                    ////                                        }
+                                    ////
+                                    ////                                    });
+                                    //
+                                    //                                });
+                                    //
+                                    //                            });
+                                    })
+                                }else{
                                     var response ={
-                                        "res":1
+                                        "res":0
                                     };
                                     res.send(response);
-                                ////                                        }
-                                ////
-                                ////                                    });
-                                //
-                                //                                });
-                                //
-                                //                            });
-                                })
-                            }else{
-                                var response ={
-                                    "res":0
-                                };
-                                res.send(response);
-                            }
-                        });
-                    }
+                                }
+                            });
+                        }
 
 
-                });
+                    });
        
-            }
-            else
-            {
-                console.log('already registered');
+                }
+                else
+                {
+                    console.log('already registered');
   
-                HELPER.setFlashMessage('Already registered user', 'danger');
-                res.redirect('/login');
-            /*var response ={
+                    HELPER.setFlashMessage('Already registered user', 'danger');
+                    res.redirect('/login');
+                /*var response ={
                     "res":'registered'
                 };
                 res.send(response);*/
-            }
-        });
+                }
+            });
+        }
     // });
 
     },
@@ -401,10 +416,10 @@ var userController = {
                                         //                        
                                         //                    });
 
-                                       UserModel.UserSocketIdUpdate(user_data, function(resp) {
+                                        UserModel.UserSocketIdUpdate(user_data, function(resp) {
 
                                             });
-                                   });
+                                    });
                                 });
                                 if (form_data.location)
                                 {
@@ -444,7 +459,7 @@ var userController = {
 
                                                     if (err)
                                                         throw err;
-                                                    //console.log('resized');
+                                                //console.log('resized');
                                                 });
                                                 im.resize({
                                                     srcPath: DEFINES.USER_IMAGE_PATH + user_image,
@@ -455,7 +470,7 @@ var userController = {
 
                                                     if (err)
                                                         throw err;
-                                                    //console.log('resized');
+                                                //console.log('resized');
                                                 });
 
                                                 var user_profile_data = {
@@ -700,12 +715,12 @@ var userController = {
                         if (ress)
                         {
 
-//                            req.session.login_user_name = ress[0].name;
-//                            req.session.login_user_id = ress[0]._id.toHexString();
+                            //                            req.session.login_user_name = ress[0].name;
+                            //                            req.session.login_user_id = ress[0]._id.toHexString();
 
                             UserModel.InitialSettings(ress[0]._id, function(callback) {
-                                 var bef_email = useremail+pass_salt;
-                                     var cryptedEmail = crypto.createHash('md5').update(bef_email).digest("hex");
+                                var bef_email = useremail+pass_salt;
+                                var cryptedEmail = crypto.createHash('md5').update(bef_email).digest("hex");
                                 var html = '<b>Hi ' + form_data.name + ', </b><br/>' + 'Please use the below link for your account activation.<br/>\n\
                                      <a href="' + sleekConfig.siteUrl + '/verify/' + cryptedEmail + '/'+ress[0]._id+'">' + sleekConfig.siteUrl + '/verify/' + cryptedEmail + '/'+ress[0]._id+'</a>                                  ';
                                    
@@ -740,27 +755,27 @@ var userController = {
 
                                 HELPER.socketNotification('', 'notification', html, maildata, true);
                                   
-                                       req.session.mailverifymsg = 'Please check your mailbox';  
-//                                sio.sockets.on('connection', function(socket)
-//                                {
-//                                    socket.on('socket_data', function(user_id) {
-//                                        //  console.log(socket);
-//                                        loggedUser['socket'] = socket;
-//                                        var user_data = {
-//                                            "user_id": user_id,
-//                                            "socket_id": socket.id
-//
-//                                        }
-//
-//                                        //                    UserModel.pinLikeCheck(req.session.login_user_id,'528c79656a1167e117000001',function(callback){
-//                                        //                        
-//                                        //                    });
-//
-////                                        UserModel.UserSocketIdUpdate(user_data, function(resp) {
-////
-////                                            });
-//                                    });
-//                                });
+                                req.session.mailverifymsg = 'Please check your mailbox';  
+                                //                                sio.sockets.on('connection', function(socket)
+                                //                                {
+                                //                                    socket.on('socket_data', function(user_id) {
+                                //                                        //  console.log(socket);
+                                //                                        loggedUser['socket'] = socket;
+                                //                                        var user_data = {
+                                //                                            "user_id": user_id,
+                                //                                            "socket_id": socket.id
+                                //
+                                //                                        }
+                                //
+                                //                                        //                    UserModel.pinLikeCheck(req.session.login_user_id,'528c79656a1167e117000001',function(callback){
+                                //                                        //                        
+                                //                                        //                    });
+                                //
+                                ////                                        UserModel.UserSocketIdUpdate(user_data, function(resp) {
+                                ////
+                                ////                                            });
+                                //                                    });
+                                //                                });
 
                                 if (form_data.profile_image_url)
                                 {
@@ -792,7 +807,7 @@ var userController = {
 
                                                     if (err)
                                                         throw err;
-                                                    //console.log('resized');
+                                                //console.log('resized');
                                                 });
                                                 im.resize({
                                                     srcPath: DEFINES.USER_IMAGE_PATH + user_image,
@@ -803,7 +818,7 @@ var userController = {
 
                                                     if (err)
                                                         throw err;
-                                                    //console.log('resized');
+                                                //console.log('resized');
                                                 });
 
                                                 var user_profile_data = {
@@ -906,7 +921,7 @@ var userController = {
 
 
     },
-     /*
+    /*
      * follow user
      * @author Arya <arya@cubettech.com>
      * @Date 8-11-2013
@@ -990,7 +1005,7 @@ var userController = {
             res.redirect('/login');
         })
     },
-     /*
+    /*
      * set initial settings on signup
      * @author Arya <arya@cubettech.com>
      * @Date 8-11-2013
@@ -1019,7 +1034,7 @@ var userController = {
         });
 
     },
-     /*
+    /*
      * change user settings
      * @author Arya <arya@cubettech.com>
      * @Date 15-11-2013
@@ -1083,7 +1098,7 @@ var userController = {
 
                                         if (err)
                                             throw err;
-                                        //console.log('resized');
+                                    //console.log('resized');
                                     });
                                     im.resize({
                                         srcPath: DEFINES.USER_IMAGE_PATH + newimage,
@@ -1094,7 +1109,7 @@ var userController = {
 
                                         if (err)
                                             throw err;
-                                        //console.log('resized');
+                                    //console.log('resized');
                                     });
                                     var user_profile_data = {
                                         "pic": newimage,
@@ -1183,31 +1198,31 @@ var userController = {
                               Your  password has been reset successfully.<br/>\
                               New password is :<b>' + pwd + '</b>';
                                 // setup e-mail data with unicode symbols
-//                                var mailOptions = {
-//                                    from: "MYYNA <info@cubettech.com>", // sender address
-//                                    to: usermail, // list of receivers
-//                                    subject: "Password Reset", // Subject line
-//                                    html: html // html body
-//                                }
+                                //                                var mailOptions = {
+                                //                                    from: "MYYNA <info@cubettech.com>", // sender address
+                                //                                    to: usermail, // list of receivers
+                                //                                    subject: "Password Reset", // Subject line
+                                //                                    html: html // html body
+                                //                                }
                                 
                                 var maildata = {
-                                        mailcontent:{
-                                            "subject": "Password Reset",
-                                            "body":html
-                                        },
-                                        "tomail": usermail,
-                                        from: "MYYNA <info@cubettech.com>",
-                                        "html"  : html,
-                                        "subject": "Password Reset"
-                                    }
-//                                sendMail(mailOptions, function(error, response) {
-//                                    if (error) {
-//                                        console.log(error);
-//                                    } else {
-//                                        console.log("Message sent: " + response.message);
-//                                    }
-//                                });
-                                 HELPER.socketNotification('', 'notification', html, maildata, true);
+                                    mailcontent:{
+                                        "subject": "Password Reset",
+                                        "body":html
+                                    },
+                                    "tomail": usermail,
+                                    from: "MYYNA <info@cubettech.com>",
+                                    "html"  : html,
+                                    "subject": "Password Reset"
+                                }
+                                //                                sendMail(mailOptions, function(error, response) {
+                                //                                    if (error) {
+                                //                                        console.log(error);
+                                //                                    } else {
+                                //                                        console.log("Message sent: " + response.message);
+                                //                                    }
+                                //                                });
+                                HELPER.socketNotification('', 'notification', html, maildata, true);
                                 var data = {
                                     status: '1',
                                     msg: 'Password reset successful. Check your mailbox.'
@@ -1225,7 +1240,7 @@ var userController = {
             });
         }
     },
-     /*
+    /*
      * share pin functionality
      * @author Arya <arya@cubettech.com>
      * @Date 8-11-2013

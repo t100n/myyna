@@ -40,7 +40,7 @@ var userController = {
         system.loadView(res, path.join('','admin/user/add'));
     },
     addUsersPost: function(req, res){
-        if(req.body.username && req.body.password && (req.body.password == req.body.password_r)){
+        if(req.body.username && req.body.password && req.body.email && (req.body.password == req.body.password_r)){
             
             var crypto = require('crypto');
             var user_pass = req.body.password + pass_salt;
@@ -84,7 +84,7 @@ var userController = {
         }
     },
     updateUsersPost: function(req,res){
-        if(req.body.id){
+        if(req.body.id && req.body.email && req.body.name){
             var data = {
                 "name": req.body.name,
                 "email": req.body.email
