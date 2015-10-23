@@ -33,6 +33,14 @@
 
 //require our needs
 var express = require('express');
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
+var morgan = require('morgan');
+var bodyParser = require('body-parser');
+var multer = require('multer');
+var favicon = require('serve-favicon');
+var methodOverride = require('method-override');
+var serveStatic = require('serve-static')
 var http = require('http');
 var path = require('path');
 var exphbs  = require('express-handlebars');
@@ -55,19 +63,21 @@ app.set('view engine', 'handlebars');
 app.engine('html',  exphbs({defaultLayout: 'default',
                             layoutsDir: path.join(__dirname, 'application/layouts/'), extname:".html"})
             ); 
-app.use(express.favicon(path.join(__dirname, 'public/favicon.ico'))); 
-app.use(express.logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded());  
+app.use(favicon(path.join(__dirname, 'public/favicon.ico'))); 
+app.use(morgan('combined'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());  
 app.use(helmet.xframe());
 app.use(helmet.iexss());
 app.use(helmet.contentTypeOptions());
 app.use(helmet.cacheControl());
-app.use(express.methodOverride());
-app.use(express.cookieParser('CubEtNoDeSlEek'));
-app.use(express.session());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'uploads')));
+app.use(methodOverride());
+app.use(cookieParser('CubEtNoDeSlEek'));
+app.use(session({
+  secret: 'asdh182738ud8awhe!p9qwei9pqwi'
+}));
+app.use(serveStatic(path.join(__dirname, 'public')));
+app.use(serveStatic(path.join(__dirname, 'uploads')));
 app.set('strict routing');
 
 //set Site url
