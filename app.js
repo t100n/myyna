@@ -40,7 +40,8 @@ var bodyParser = require('body-parser');
 var multer = require('multer');
 var favicon = require('serve-favicon');
 var methodOverride = require('method-override');
-var serveStatic = require('serve-static')
+var serveStatic = require('serve-static');
+var errorhandler = require('errorhandler');
 var http = require('http');
 var path = require('path');
 var exphbs  = require('express-handlebars');
@@ -95,7 +96,7 @@ fs.exists(sFolderPath, function(exists) {
 });
 // development only
 if ('development' == app.get('env')) {
-    app.use(express.errorHandler());
+    app.use(errorhandler());
 } else {
     //prevent crash
     process.on('uncaughtException', function (exception) {
