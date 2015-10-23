@@ -48,7 +48,8 @@
     "node-twitter-api":"1.1.1",    
     "social-share":"latest",
     "helmet":"0.1.1",
-    "ncp": "latest"
+    "ncp": "latest",
+    "async": "latest"
   },
   "license": "MIT"
 }
