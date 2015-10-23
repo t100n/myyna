@@ -35,7 +35,7 @@
 var express = require('express');
 var http = require('http');
 var path = require('path');
-var exphbs  = require('express3-handlebars');
+var exphbs  = require('express-handlebars');
 var helmet  = require('helmet');
 var fs = require('fs');
 var hbs = require('handlebars');
@@ -45,33 +45,30 @@ global.app = express();
 
 global.sleekConfig = {};
 require(path.join(__dirname,'application/config/config.js'));
-app.configure(function(){
-    app.set('env', sleekConfig.env);
-    // all environments
-    app.set('port', process.env.PORT || sleekConfig.appPort);
-    app.set('host', sleekConfig.appHost ? sleekConfig.appHost : 'localhost');
-    app.set('views', path.join(__dirname, 'application/views'));
-    app.set('view engine', 'handlebars');
-    app.engine('html',  exphbs({defaultLayout: 'default',
-                                layoutsDir: path.join(__dirname, 'application/layouts/'), extname:".html"})
-                ); 
-    app.use(express.favicon(path.join(__dirname, 'public/favicon.ico'))); 
-    app.use(express.logger('dev'));
-    app.use(express.json());
-    app.use(express.urlencoded());  
-    app.use(helmet.xframe());
-    app.use(helmet.iexss());
-    app.use(helmet.contentTypeOptions());
-    app.use(helmet.cacheControl());
-    app.use(express.methodOverride());
-    app.use(express.cookieParser('CubEtNoDeSlEek'));
-    app.use(express.session());
-    app.use(express.static(path.join(__dirname, 'public')));
-    app.use(express.static(path.join(__dirname, 'uploads')));
-    app.set('strict routing');
 
-    
-});
+app.set('env', sleekConfig.env);
+// all environments
+app.set('port', process.env.PORT || sleekConfig.appPort);
+app.set('host', sleekConfig.appHost ? sleekConfig.appHost : 'localhost');
+app.set('views', path.join(__dirname, 'application/views'));
+app.set('view engine', 'handlebars');
+app.engine('html',  exphbs({defaultLayout: 'default',
+                            layoutsDir: path.join(__dirname, 'application/layouts/'), extname:".html"})
+            ); 
+app.use(express.favicon(path.join(__dirname, 'public/favicon.ico'))); 
+app.use(express.logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded());  
+app.use(helmet.xframe());
+app.use(helmet.iexss());
+app.use(helmet.contentTypeOptions());
+app.use(helmet.cacheControl());
+app.use(express.methodOverride());
+app.use(express.cookieParser('CubEtNoDeSlEek'));
+app.use(express.session());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'uploads')));
+app.set('strict routing');
 
 //set Site url
 //global.sleekConfig.siteUrl = app.get('host')+':'+app.get('port');
