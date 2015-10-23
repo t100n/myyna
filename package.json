@@ -47,7 +47,8 @@
     "facebook-node-sdk":"0.2.0",
     "node-twitter-api":"1.1.1",    
     "social-share":"latest",
-    "helmet":"0.1.1"
+    "helmet":"0.1.1",
+    "ncp": "latest",
   },
   "license": "MIT"
 }
