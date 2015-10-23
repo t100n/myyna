@@ -29,6 +29,7 @@
     "serve-favicon": "latest",
     "method-override": "latest",
     "serve-static": "latest",
+    "errorhandler": "latest",
     "handlebars": "latest",
     "mongodb": "latest",
     "mongoose": "latest",
