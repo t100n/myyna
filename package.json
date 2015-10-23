@@ -25,7 +25,7 @@
     "mongodb": "latest",
     "mongoose": "latest",
     "consolidate": "latest",
-    "express3-handlebars": "latest",
+    "express-handlebars": "latest",
     "webshot": "latest",
     "imagemagick": "latest",
     "socket.io": "0.9.16",
